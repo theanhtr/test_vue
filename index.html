@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <login-form />
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+        let app = Vue.createApp({
+            components: ['login-form'],
+        })
+
+        app.component('login-form', {
+            template: `
+                <form @submit.prevent="handleSubmit">
+                    <h2> {{title}} </h2>
+                    
+                    <input-text :label="emailLabel" v-model="emailData" @update-input-text="handleUpdateEmail"/>
+                    <input-text :label="passwordLabel" v-model="passwordData" :handleChange="handleUpdatePassword"/>
+                    
+                    <button> Login </button>
+                </form>
+            `,
+            data() {
+                return {
+                    title: "Login",
+                    emailData: 'teset',
+                    passwordData: 'pasd',
+                    emailLabel: "Email",
+                    passwordLabel: "Password",
+                }
+            },
+            components: ['input-text'],
+            methods: {
+                handleSubmit() {
+                    console.log(this.emailData);
+                    console.log(this.passwordData);    
+                },
+                handleUpdateEmail(newEmail) {
+                    this.emailData = newEmail;
+                },
+                handleUpdatePassword(newPassword) {
+                    this.passwordData = newPassword;
+                },
+            },
+        })
+        
+        app.component('input-text', {
+            template: `
+                <label> {{label}} </label>
+                <input type="text" v-model="inputValue" @input="handleInputChange">
+            `,
+            props: ['label', 'modelValue', 'handleChange'],
+            computed: {
+                inputValue: {
+                    get() {
+                        return this.modelValue
+                    },
+                    set(value) {
+                        this.$emit('update-input-text', value)
+                    }
+                },
+            }, 
+            methods: {
+                handleInputChange(event) {
+                    this.handleChange(event.target.value);
+                },
+            },
+        })
+
+        app.mount('#app')
+
+    </script>
+</body>
+</html>
